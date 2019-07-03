@@ -41,7 +41,7 @@ PDAnalyzer::PDAnalyzer() {
 
     //Jet Parameters
     setUserParameter( "minPtJet", "10" );
-    setUserParameter( "cutBTag", "0.0494" ); 
+    setUserParameter( "cutBTag", "0.2770" ); 
     // DeepJet loose = 0.0494, medium = 0.2770, tight = 0.7264
     setUserParameter( "jetDrCut", "0.5" ); // min dR wrt signal B
 
@@ -129,7 +129,7 @@ bool PDAnalyzer::analyze( int entry, int event_file, int event_tot ) {
     }
 // additional features
     computeMuonVar();
-    inizializeTagVariables();
+    inizializeOsMuonTagVars();
     tWriter->Reset();
     convSpheCart(jetPt, jetEta, jetPhi, jetPx, jetPy, jetPz);
     convSpheCart(muoPt, muoEta, muoPhi, muoPx, muoPy, muoPz);
