@@ -41,7 +41,7 @@ PDAnalyzer::PDAnalyzer() {
 
     //Jet Parameters
     setUserParameter( "minPtJet", "10" );
-    setUserParameter( "cutBTag", "0.2770" ); 
+    setUserParameter( "cutBTag", "0.15" ); 
     // DeepJet loose = 0.0494, medium = 0.2770, tight = 0.7264
     setUserParameter( "jetDrCut", "0.5" ); // min dR wrt signal B
 
@@ -80,10 +80,12 @@ void PDAnalyzer::beginJob() {
     tWriter->open( getUserParameter("outputFile"), "RECREATE" ); // second ntuple
 
     inizializeMuonMvaReader();
-    inizializeOSMuonMvaReader();
 
     if(process=="BsJPsiPhi") SetBsMassRange(5.20, 5.65);
     if(process=="BuJPsiK") SetBuMassRange(5.1, 5.65);
+
+    nTot = 0;
+    nPass = 0;
 
     return;
 
@@ -223,14 +225,20 @@ bool PDAnalyzer::analyze( int entry, int event_file, int event_tot ) {
     if(ssbPVT < 0) return false;
 
     setVtxOsMuonTag(ssbSVT, ssbPVT);
+    nTot += evtWeight;
 
-    if(getOsMuon()>=0) return false;
+    bool osmuon = false;
+    if(selectOsMuon()>=0) osmuon = true;
 //    if(nElectrons>0) return false;  // still need to define the electron selection
 
     //FILLING SS
     (tWriter->ssbMass) = svtMass->at(ssbSVT);
     (tWriter->ssbIsTight) = isTight;
     (tWriter->ssbLund) = ssbLund;
+
+    (tWriter->ssbPt) = tB.Pt();
+    (tWriter->ssbEta) = tB.Eta();
+    (tWriter->ssbPhi) = tB.Phi();
 
     (tWriter->ssbPVTx) = pvtX->at(ssbPVT);
     (tWriter->ssbPVTy) = pvtY->at(ssbPVT);
@@ -242,6 +250,7 @@ bool PDAnalyzer::analyze( int entry, int event_file, int event_tot ) {
 
     (tWriter->evtWeight) = evtWeight;
     (tWriter->evtNumber) = event_tot;
+    (tWriter->isOSMuon) = osmuon;
 
 //-----------------------------------------JET-----------------------------------------
 
@@ -287,7 +296,15 @@ bool PDAnalyzer::analyze( int entry, int event_file, int event_tot ) {
     }
 
     //TAG
-    if(bestJet < 0) return true;
+    if(bestJet < 0){
+        (tWriter->isOSJet) = false;
+        tWriter->fill();
+        return true;
+    }
+
+    (tWriter->isOSJet) = true;
+
+    nPass += evtWeight;
 
     //indices
     int iJet = bestJet;
@@ -383,6 +400,9 @@ void PDAnalyzer::endJob() {
 // additional features
 
     tWriter->close();   // second ntuple
+
+    cout<<nTot<<"   "<<nPass<<endl;
+    cout<<100.*(float)nPass/nTot<<endl;
 
     return;
 }

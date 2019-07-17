@@ -69,6 +69,8 @@ class PDAnalyzer: public virtual PDAnalyzerUtil
 
     float cutBTag, minPtJet, jetDrCut, jetDzCut;
 
+    int nTot, nPass;
+
 // additional features: second ntuple
     PDSecondNtupleWriter* tWriter;
 

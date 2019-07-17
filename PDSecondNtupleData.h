@@ -37,12 +37,18 @@ void initTree() {
     setBranch( "ssbLund", &ssbLund, "ssbLund/I", &b_ssbLund );
     setBranch( "ssbIsTight", &ssbIsTight, "ssbIsTight/I", &b_ssbIsTight );
 
+    setBranch( "ssbPt", &ssbPt, "ssbPt/F", &b_ssbPt );
+    setBranch( "ssbEta", &ssbEta, "ssbEta/F", &b_ssbEta );
+    setBranch( "ssbPhi", &ssbPhi, "ssbPhi/F", &b_ssbPhi );
+
     setBranch( "ssbPVTx", &ssbPVTx, "ssbPVTx/F", &b_ssbPVTx );
     setBranch( "ssbPVTy", &ssbPVTy, "ssbPVTy/F", &b_ssbPVTy );
     setBranch( "ssbPVTz", &ssbPVTz, "ssbPVTz/F", &b_ssbPVTz );
 
     setBranch( "evtNumber", &evtNumber, "evtNumber/I", &b_evtNumber );
     setBranch( "evtWeight", &evtWeight, "evtWeight/I", &b_evtWeight );
+    setBranch( "isOSMuon", &isOSMuon, "isOSMuon/I", &b_isOSMuon );
+    setBranch( "isOSJet", &isOSJet, "isOSJet/I", &b_isOSJet );
 
     setBranch( "hltJpsiMu", &hltJpsiMu , "hltJpsiMu/I" , &b_hltJpsiMu );
     setBranch( "hltJpsiTrkTrk", &hltJpsiTrkTrk , "hltJpsiTrkTrk/I" , &b_hltJpsiTrkTrk );
@@ -81,11 +87,11 @@ void initTree() {
 
 }
 
-float ssbMass, ssbPVTx, ssbPVTy, ssbPVTz;
-int ssbLund, evtNumber, hltJpsiMu, hltJpsiTrkTrk, hltJpsiTrk, ssbIsTight, evtWeight;
+float ssbMass, ssbPVTx, ssbPVTy, ssbPVTz, ssbPt, ssbEta, ssbPhi;
+int ssbLund, evtNumber, hltJpsiMu, hltJpsiTrkTrk, hltJpsiTrk, ssbIsTight, evtWeight, isOSMuon, isOSJet;
 
-TBranch *b_ssbMass, *b_ssbPVTx, *b_ssbPVTy, *b_ssbPVTz;
-TBranch *b_ssbLund, *b_evtNumber, *b_hltJpsiMu, *b_hltJpsiTrkTrk, *b_hltJpsiTrk, *b_ssbIsTight, *b_evtWeight;
+TBranch *b_ssbMass, *b_ssbPVTx, *b_ssbPVTy, *b_ssbPVTz, *b_ssbPt, *b_ssbEta, *b_ssbPhi;
+TBranch *b_ssbLund, *b_evtNumber, *b_hltJpsiMu, *b_hltJpsiTrkTrk, *b_hltJpsiTrk, *b_ssbIsTight, *b_evtWeight, *b_isOSMuon, *b_isOSJet;
 
 float jetPt, jetEta, jetPhi, jetCharge, jetCSV, jetDrB, jetDzB, jetProbb;
 float jetNHF, jetNEF, jetCHF, jetCEF, jetNCH;
