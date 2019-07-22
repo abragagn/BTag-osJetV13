@@ -76,6 +76,8 @@ class PDAnalyzer: public virtual PDAnalyzerUtil
 
  private:
 
+    double dZele(const int iEle, const int iVtx);
+
 
     // dummy copy constructor and assignment
     PDAnalyzer ( const PDAnalyzer& );

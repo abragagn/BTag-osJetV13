@@ -229,7 +229,27 @@ bool PDAnalyzer::analyze( int entry, int event_file, int event_tot ) {
 
     bool osmuon = false;
     if(selectOsMuon()>=0) osmuon = true;
-//    if(nElectrons>0) return false;  // still need to define the electron selection
+
+    //Mario's Electron Selection
+    bool osele = false;
+    for(int iEle = 0; iEle<nElectrons; ++iEle){
+        if(elePt->at(iEle) < 2.5) continue;
+        if(fabs(eleEta->at(iEle)) > 2.4) continue;
+        if(fabs(dZele(iEle, ssbPVT) > 0.5)) continue;
+        if( deltaR(eleEta->at(iEle),elePhi->at(iEle),tB.Eta(),tB.Phi()) < 0.4) continue;
+        // if(std::find(tkSsB.begin(), tkSsB.end(), eletk) != tkSsB.end()) continue;
+        float idvalue = -2;
+        for (int iUserInfo = 0; iUserInfo < nUserInfo; ++iUserInfo){
+            if(useObjType->at(iUserInfo) == PDEnumString::recElectron && useObjIndex->at(iUserInfo) == iEle){
+                if(useInfoType->at(iUserInfo) == PDEnumString::ElectronMVAEstimatorRun2Fall17NoIsoV2Values){
+                    idvalue = useInfoValue->at(iUserInfo);
+                }
+            }
+        }
+        if(idvalue < -0.999) continue;
+        osele = true;
+    }
+
 
     //FILLING SS
     (tWriter->ssbMass) = svtMass->at(ssbSVT);
@@ -251,6 +271,7 @@ bool PDAnalyzer::analyze( int entry, int event_file, int event_tot ) {
     (tWriter->evtWeight) = evtWeight;
     (tWriter->evtNumber) = event_tot;
     (tWriter->isOSMuon) = osmuon;
+    (tWriter->isOSEle) = osele;
 
 //-----------------------------------------JET-----------------------------------------
 
@@ -456,4 +477,59 @@ int PDAnalyzer::GetClosesJet( float pt, float eta, float phi )
        drb = dr;
     }
     return best;
+}
+
+
+double PDAnalyzer::dZele(const int iEle, const int iVtx)
+{
+    number px;
+    number py;
+    number pz;
+
+    if(eleGsfPx->size())
+    {
+        px = eleGsfPx->at(iEle);
+        py = eleGsfPy->at(iEle);
+        pz = eleGsfPz->at(iEle);
+    }
+    else if(eleGsfPt->size())
+    {
+        TVector3 pEle;
+        pEle.SetPtEtaPhi(eleGsfPt->at(iEle), eleGsfEta->at(iEle), eleGsfPhi->at(iEle));
+        px = pEle.Px();
+        py = pEle.Py();
+        pz = pEle.Pz();
+    }
+    else  if(eleGsfPxAtVtx->size())
+    {
+        px = eleGsfPxAtVtx->at(iEle);
+        py = eleGsfPyAtVtx->at(iEle);
+        pz = eleGsfPzAtVtx->at(iEle);
+    }
+    else if(eleGsfPtAtVtx->size())
+    {
+        TVector3 pEle;
+        pEle.SetPtEtaPhi(eleGsfPtAtVtx->at(iEle), eleGsfEtaAtVtx->at(iEle), eleGsfPhiAtVtx->at(iEle));
+        px = pEle.Px();
+        py = pEle.Py();
+        pz = pEle.Pz();
+    }
+    else if(elePx->size())
+    {
+        px = elePx->at(iEle);
+        py = elePy->at(iEle);
+        pz = elePz->at(iEle);
+    }
+    else
+    {
+        TVector3 pEle;
+        pEle.SetPtEtaPhi(elePt->at(iEle), eleEta->at(iEle), elePhi->at(iEle));
+        px = pEle.Px();
+        py = pEle.Py();
+        pz = pEle.Pz();
+    }
+
+    number pq = modSqua(px, py, 0);
+    return (((px * (pvtX->at(iVtx) - bsX))) + (py * (pvtY->at(iVtx) - bsY)) * pz/pq) +
+            eleGsfDz->at(iEle) + bsZ - pvtZ->at(iVtx);
 }
