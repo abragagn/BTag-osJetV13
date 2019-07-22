@@ -235,7 +235,7 @@ bool PDAnalyzer::analyze( int entry, int event_file, int event_tot ) {
     for(int iEle = 0; iEle<nElectrons; ++iEle){
         if(elePt->at(iEle) < 2.5) continue;
         if(fabs(eleEta->at(iEle)) > 2.4) continue;
-        if(fabs(dZele(iEle, ssbPVT) > 0.5)) continue;
+        if(fabs(dZele(iEle, ssbPVT)) > 0.5) continue;
         if( deltaR(eleEta->at(iEle),elePhi->at(iEle),tB.Eta(),tB.Phi()) < 0.4) continue;
         // if(std::find(tkSsB.begin(), tkSsB.end(), eletk) != tkSsB.end()) continue;
         float idvalue = -2;
